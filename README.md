@@ -52,6 +52,8 @@ OS Project
                  │ 16. Logging / Dashboard │
                  └─────────────────────────┘
 
+#Phase-1 : Choosing the data sets
+
 ## Tech Stack
 * Python
 * Scikit-learn / TensorFlow (for model training)
