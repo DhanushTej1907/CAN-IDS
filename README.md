@@ -9,6 +9,8 @@ OS Project
 * Scikit-learn / TensorFlow (for model training)
 * Pandas & NumPy (for data processing)
 
+Step-1 : Choose the proper environment for this project 
+
 
 
 
