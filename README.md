@@ -14,5 +14,10 @@ Step-1 : Choose the proper environment for this project
 
 
 
+Step-2 : What to be installed
+
+
+
+
 
 
