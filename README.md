@@ -52,7 +52,7 @@ OS Project
                  │ 16. Logging / Dashboard │
                  └─────────────────────────┘
 
-#Phase-1 : Choosing the data sets && Dividing the training and testing data 
+****** Phase-1 : Choosing the data sets && Dividing the training and testing data ******
                  REAL CAN DATA
                       │
           ┌───────────┴───────────┐
@@ -78,6 +78,24 @@ OS Project
           │
           ↓
    Real-Time CAN IDS
+
+
+***** Phase-1: Data Integrity check completed ***** 
+
+======================================================
+
+***** Phase-2: Data Cleaning ***** 
+
+
+
+
+
+
+
+
+
+
+   
 
 ## Tech Stack
 * Python
