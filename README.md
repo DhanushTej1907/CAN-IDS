@@ -52,7 +52,32 @@ OS Project
                  │ 16. Logging / Dashboard │
                  └─────────────────────────┘
 
-#Phase-1 : Choosing the data sets
+#Phase-1 : Choosing the data sets && Dividing the training and testing data 
+                 REAL CAN DATA
+                      │
+          ┌───────────┴───────────┐
+          ↓                       ↓
+   CarChallenge 2020          Car-Hacking
+          │                       │
+          │                  External Test
+          ↓                       │
+    Feature Engineering           │
+          │                       │
+          ↓                       ↓
+       ML Models ─────────→ Generalization
+          │
+          ↓
+   Best IDS Model
+          │
+          ↓
+      ROAD Dataset
+          │
+          ↓
+ Advanced/Stealthy Attack
+       Evaluation
+          │
+          ↓
+   Real-Time CAN IDS
 
 ## Tech Stack
 * Python
