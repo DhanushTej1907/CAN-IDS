@@ -22,7 +22,7 @@ OS Project
                               │
                               │ Upload
                               ▼
-                 ┌─────────────────────────┐
+                 ┌─────────────────────────┐ 
                  │    COLAB / KAGGLE GPU  │
                  │                         │
                  │  6. Model Training      │
