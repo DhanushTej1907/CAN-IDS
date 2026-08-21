@@ -105,15 +105,15 @@ OS Project
 
 
 Step-0 : Collect the data
-
+Data collection done
 
 
 Step-1 : Choose the proper environment for this project 
-
-
+Environment Decision done
 
 
 Step-2 : What to be installed
+Using VCAN modules for simulation but not decided which one to use 
 
 
 
