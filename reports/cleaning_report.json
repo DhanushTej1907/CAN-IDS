@@ -1,0 +1,902 @@
+[
+  {
+    "source_file": "Fin_host_session_submit_S",
+    "subset": "final",
+    "mode": "S",
+    "rows": 1270310,
+    "timestamp_min": 16.05212,
+    "timestamp_max": 466.82313,
+    "duration_s": 450.77101,
+    "timestamps_relative": true,
+    "checks": [
+      {
+        "check": "nulls",
+        "count": 0,
+        "status": "OK",
+        "note": "",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "exact_duplicate_rows",
+        "count": 0,
+        "status": "OK",
+        "note": "Same timestamp, ID, DLC, payload and labels as an earlier row.",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "duplicate_timestamp_id",
+        "count": 0,
+        "status": "OK",
+        "note": "Same (timestamp, arb_id) as an earlier row; payload may differ.",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "dlc_vs_byte_count_mismatch",
+        "count": 0,
+        "status": "OK",
+        "note": "",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "byte_padding_or_range",
+        "count": 0,
+        "status": "OK",
+        "note": "",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "arb_id_outside_11bit",
+        "count": 0,
+        "status": "OK",
+        "note": "",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "timestamp_decreasing",
+        "count": 0,
+        "status": "OK",
+        "note": "Steps where timestamp goes backwards in file order.",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "timestamp_ties",
+        "count": 0,
+        "status": "OK",
+        "note": "Consecutive frames with identical timestamps (row_idx keeps order).",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "unknown_class",
+        "count": 0,
+        "status": "OK",
+        "note": "",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "unknown_subclass",
+        "count": 0,
+        "status": "OK",
+        "note": "",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "class_subclass_inconsistent",
+        "count": 0,
+        "status": "OK",
+        "note": "",
+        "breakdown": {},
+        "examples": []
+      }
+    ]
+  },
+  {
+    "source_file": "Pre_submit_D",
+    "subset": "prelim_submit",
+    "mode": "D",
+    "rows": 2000733,
+    "timestamp_min": 1599046795.646978,
+    "timestamp_max": 1599047544.370049,
+    "duration_s": 748.7230710983276,
+    "timestamps_relative": false,
+    "checks": [
+      {
+        "check": "nulls",
+        "count": 0,
+        "status": "OK",
+        "note": "",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "exact_duplicate_rows",
+        "count": 0,
+        "status": "OK",
+        "note": "Same timestamp, ID, DLC, payload and labels as an earlier row.",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "duplicate_timestamp_id",
+        "count": 0,
+        "status": "OK",
+        "note": "Same (timestamp, arb_id) as an earlier row; payload may differ.",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "dlc_vs_byte_count_mismatch",
+        "count": 0,
+        "status": "OK",
+        "note": "",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "byte_padding_or_range",
+        "count": 0,
+        "status": "OK",
+        "note": "",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "arb_id_outside_11bit",
+        "count": 0,
+        "status": "OK",
+        "note": "",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "timestamp_decreasing",
+        "count": 0,
+        "status": "OK",
+        "note": "Steps where timestamp goes backwards in file order.",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "timestamp_ties",
+        "count": 0,
+        "status": "OK",
+        "note": "Consecutive frames with identical timestamps (row_idx keeps order).",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "unknown_class",
+        "count": 0,
+        "status": "OK",
+        "note": "",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "unknown_subclass",
+        "count": 0,
+        "status": "OK",
+        "note": "",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "class_subclass_inconsistent",
+        "count": 0,
+        "status": "OK",
+        "note": "",
+        "breakdown": {},
+        "examples": []
+      }
+    ]
+  },
+  {
+    "source_file": "Pre_submit_S",
+    "subset": "prelim_submit",
+    "mode": "S",
+    "rows": 1751313,
+    "timestamp_min": 1599045353.8784769,
+    "timestamp_max": 1599046002.7957606,
+    "duration_s": 648.9172837734222,
+    "timestamps_relative": false,
+    "checks": [
+      {
+        "check": "nulls",
+        "count": 0,
+        "status": "OK",
+        "note": "",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "exact_duplicate_rows",
+        "count": 0,
+        "status": "OK",
+        "note": "Same timestamp, ID, DLC, payload and labels as an earlier row.",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "duplicate_timestamp_id",
+        "count": 0,
+        "status": "OK",
+        "note": "Same (timestamp, arb_id) as an earlier row; payload may differ.",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "dlc_vs_byte_count_mismatch",
+        "count": 0,
+        "status": "OK",
+        "note": "",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "byte_padding_or_range",
+        "count": 0,
+        "status": "OK",
+        "note": "",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "arb_id_outside_11bit",
+        "count": 0,
+        "status": "OK",
+        "note": "",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "timestamp_decreasing",
+        "count": 0,
+        "status": "OK",
+        "note": "Steps where timestamp goes backwards in file order.",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "timestamp_ties",
+        "count": 0,
+        "status": "OK",
+        "note": "Consecutive frames with identical timestamps (row_idx keeps order).",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "unknown_class",
+        "count": 0,
+        "status": "OK",
+        "note": "",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "unknown_subclass",
+        "count": 0,
+        "status": "OK",
+        "note": "",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "class_subclass_inconsistent",
+        "count": 0,
+        "status": "OK",
+        "note": "",
+        "breakdown": {},
+        "examples": []
+      }
+    ]
+  },
+  {
+    "source_file": "Pre_train_D_0",
+    "subset": "prelim_train",
+    "mode": "D",
+    "rows": 179346,
+    "timestamp_min": 1597707827.052591,
+    "timestamp_max": 1597707901.707643,
+    "duration_s": 74.65505194664001,
+    "timestamps_relative": false,
+    "checks": [
+      {
+        "check": "nulls",
+        "count": 0,
+        "status": "OK",
+        "note": "",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "exact_duplicate_rows",
+        "count": 0,
+        "status": "OK",
+        "note": "Same timestamp, ID, DLC, payload and labels as an earlier row.",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "duplicate_timestamp_id",
+        "count": 0,
+        "status": "OK",
+        "note": "Same (timestamp, arb_id) as an earlier row; payload may differ.",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "dlc_vs_byte_count_mismatch",
+        "count": 0,
+        "status": "OK",
+        "note": "",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "byte_padding_or_range",
+        "count": 0,
+        "status": "OK",
+        "note": "",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "arb_id_outside_11bit",
+        "count": 0,
+        "status": "OK",
+        "note": "",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "timestamp_decreasing",
+        "count": 0,
+        "status": "OK",
+        "note": "Steps where timestamp goes backwards in file order.",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "timestamp_ties",
+        "count": 0,
+        "status": "OK",
+        "note": "Consecutive frames with identical timestamps (row_idx keeps order).",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "unknown_class",
+        "count": 0,
+        "status": "OK",
+        "note": "",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "unknown_subclass",
+        "count": 0,
+        "status": "OK",
+        "note": "",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "class_subclass_inconsistent",
+        "count": 0,
+        "status": "OK",
+        "note": "",
+        "breakdown": {},
+        "examples": []
+      }
+    ]
+  },
+  {
+    "source_file": "Pre_train_D_1",
+    "subset": "prelim_train",
+    "mode": "D",
+    "rows": 806390,
+    "timestamp_min": 1597759710.1258929,
+    "timestamp_max": 1597760014.981364,
+    "duration_s": 304.8554711341858,
+    "timestamps_relative": false,
+    "checks": [
+      {
+        "check": "nulls",
+        "count": 0,
+        "status": "OK",
+        "note": "",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "exact_duplicate_rows",
+        "count": 0,
+        "status": "OK",
+        "note": "Same timestamp, ID, DLC, payload and labels as an earlier row.",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "duplicate_timestamp_id",
+        "count": 0,
+        "status": "OK",
+        "note": "Same (timestamp, arb_id) as an earlier row; payload may differ.",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "dlc_vs_byte_count_mismatch",
+        "count": 0,
+        "status": "OK",
+        "note": "",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "byte_padding_or_range",
+        "count": 0,
+        "status": "OK",
+        "note": "",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "arb_id_outside_11bit",
+        "count": 0,
+        "status": "OK",
+        "note": "",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "timestamp_decreasing",
+        "count": 0,
+        "status": "OK",
+        "note": "Steps where timestamp goes backwards in file order.",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "timestamp_ties",
+        "count": 0,
+        "status": "OK",
+        "note": "Consecutive frames with identical timestamps (row_idx keeps order).",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "unknown_class",
+        "count": 0,
+        "status": "OK",
+        "note": "",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "unknown_subclass",
+        "count": 0,
+        "status": "OK",
+        "note": "",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "class_subclass_inconsistent",
+        "count": 0,
+        "status": "OK",
+        "note": "",
+        "breakdown": {},
+        "examples": []
+      }
+    ]
+  },
+  {
+    "source_file": "Pre_train_D_2",
+    "subset": "prelim_train",
+    "mode": "D",
+    "rows": 889395,
+    "timestamp_min": 1599046395.285203,
+    "timestamp_max": 1599046732.676073,
+    "duration_s": 337.3908700942993,
+    "timestamps_relative": false,
+    "checks": [
+      {
+        "check": "nulls",
+        "count": 0,
+        "status": "OK",
+        "note": "",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "exact_duplicate_rows",
+        "count": 0,
+        "status": "OK",
+        "note": "Same timestamp, ID, DLC, payload and labels as an earlier row.",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "duplicate_timestamp_id",
+        "count": 0,
+        "status": "OK",
+        "note": "Same (timestamp, arb_id) as an earlier row; payload may differ.",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "dlc_vs_byte_count_mismatch",
+        "count": 0,
+        "status": "OK",
+        "note": "",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "byte_padding_or_range",
+        "count": 0,
+        "status": "OK",
+        "note": "",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "arb_id_outside_11bit",
+        "count": 0,
+        "status": "OK",
+        "note": "",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "timestamp_decreasing",
+        "count": 0,
+        "status": "OK",
+        "note": "Steps where timestamp goes backwards in file order.",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "timestamp_ties",
+        "count": 0,
+        "status": "OK",
+        "note": "Consecutive frames with identical timestamps (row_idx keeps order).",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "unknown_class",
+        "count": 0,
+        "status": "OK",
+        "note": "",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "unknown_subclass",
+        "count": 0,
+        "status": "OK",
+        "note": "",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "class_subclass_inconsistent",
+        "count": 0,
+        "status": "OK",
+        "note": "",
+        "breakdown": {},
+        "examples": []
+      }
+    ]
+  },
+  {
+    "source_file": "Pre_train_S_0",
+    "subset": "prelim_train",
+    "mode": "S",
+    "rows": 180686,
+    "timestamp_min": 1597707573.06673,
+    "timestamp_max": 1597707648.369989,
+    "duration_s": 75.30325889587402,
+    "timestamps_relative": false,
+    "checks": [
+      {
+        "check": "nulls",
+        "count": 0,
+        "status": "OK",
+        "note": "",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "exact_duplicate_rows",
+        "count": 0,
+        "status": "OK",
+        "note": "Same timestamp, ID, DLC, payload and labels as an earlier row.",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "duplicate_timestamp_id",
+        "count": 0,
+        "status": "OK",
+        "note": "Same (timestamp, arb_id) as an earlier row; payload may differ.",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "dlc_vs_byte_count_mismatch",
+        "count": 0,
+        "status": "OK",
+        "note": "",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "byte_padding_or_range",
+        "count": 0,
+        "status": "OK",
+        "note": "",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "arb_id_outside_11bit",
+        "count": 0,
+        "status": "OK",
+        "note": "",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "timestamp_decreasing",
+        "count": 0,
+        "status": "OK",
+        "note": "Steps where timestamp goes backwards in file order.",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "timestamp_ties",
+        "count": 0,
+        "status": "OK",
+        "note": "Consecutive frames with identical timestamps (row_idx keeps order).",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "unknown_class",
+        "count": 0,
+        "status": "OK",
+        "note": "",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "unknown_subclass",
+        "count": 0,
+        "status": "OK",
+        "note": "",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "class_subclass_inconsistent",
+        "count": 0,
+        "status": "OK",
+        "note": "",
+        "breakdown": {},
+        "examples": []
+      }
+    ]
+  },
+  {
+    "source_file": "Pre_train_S_1",
+    "subset": "prelim_train",
+    "mode": "S",
+    "rows": 799292,
+    "timestamp_min": 1597759320.313806,
+    "timestamp_max": 1597759623.2016132,
+    "duration_s": 302.8878071308136,
+    "timestamps_relative": false,
+    "checks": [
+      {
+        "check": "nulls",
+        "count": 0,
+        "status": "OK",
+        "note": "",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "exact_duplicate_rows",
+        "count": 0,
+        "status": "OK",
+        "note": "Same timestamp, ID, DLC, payload and labels as an earlier row.",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "duplicate_timestamp_id",
+        "count": 0,
+        "status": "OK",
+        "note": "Same (timestamp, arb_id) as an earlier row; payload may differ.",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "dlc_vs_byte_count_mismatch",
+        "count": 0,
+        "status": "OK",
+        "note": "",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "byte_padding_or_range",
+        "count": 0,
+        "status": "OK",
+        "note": "",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "arb_id_outside_11bit",
+        "count": 0,
+        "status": "OK",
+        "note": "",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "timestamp_decreasing",
+        "count": 0,
+        "status": "OK",
+        "note": "Steps where timestamp goes backwards in file order.",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "timestamp_ties",
+        "count": 0,
+        "status": "OK",
+        "note": "Consecutive frames with identical timestamps (row_idx keeps order).",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "unknown_class",
+        "count": 0,
+        "status": "OK",
+        "note": "",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "unknown_subclass",
+        "count": 0,
+        "status": "OK",
+        "note": "",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "class_subclass_inconsistent",
+        "count": 0,
+        "status": "OK",
+        "note": "",
+        "breakdown": {},
+        "examples": []
+      }
+    ]
+  },
+  {
+    "source_file": "Pre_train_S_2",
+    "subset": "prelim_train",
+    "mode": "S",
+    "rows": 817042,
+    "timestamp_min": 1599043357.9238188,
+    "timestamp_max": 1599043666.3226368,
+    "duration_s": 308.39881801605225,
+    "timestamps_relative": false,
+    "checks": [
+      {
+        "check": "nulls",
+        "count": 0,
+        "status": "OK",
+        "note": "",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "exact_duplicate_rows",
+        "count": 0,
+        "status": "OK",
+        "note": "Same timestamp, ID, DLC, payload and labels as an earlier row.",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "duplicate_timestamp_id",
+        "count": 0,
+        "status": "OK",
+        "note": "Same (timestamp, arb_id) as an earlier row; payload may differ.",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "dlc_vs_byte_count_mismatch",
+        "count": 0,
+        "status": "OK",
+        "note": "",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "byte_padding_or_range",
+        "count": 0,
+        "status": "OK",
+        "note": "",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "arb_id_outside_11bit",
+        "count": 0,
+        "status": "OK",
+        "note": "",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "timestamp_decreasing",
+        "count": 0,
+        "status": "OK",
+        "note": "Steps where timestamp goes backwards in file order.",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "timestamp_ties",
+        "count": 0,
+        "status": "OK",
+        "note": "Consecutive frames with identical timestamps (row_idx keeps order).",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "unknown_class",
+        "count": 0,
+        "status": "OK",
+        "note": "",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "unknown_subclass",
+        "count": 0,
+        "status": "OK",
+        "note": "",
+        "breakdown": {},
+        "examples": []
+      },
+      {
+        "check": "class_subclass_inconsistent",
+        "count": 0,
+        "status": "OK",
+        "note": "",
+        "breakdown": {},
+        "examples": []
+      }
+    ]
+  }
+]

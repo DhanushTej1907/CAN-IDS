@@ -1,0 +1,10 @@
+# Python 3.12 (venv: py -3.12 -m venv .venv)
+pandas==3.0.6
+numpy==2.5.3
+pyarrow==25.0.1
+matplotlib==3.11.2
+seaborn==0.13.2
+jupyter
+ipykernel
+nbconvert==7.17.1
+pytest==9.1.1

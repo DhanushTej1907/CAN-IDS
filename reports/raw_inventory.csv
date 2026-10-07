@@ -1,0 +1,10 @@
+source_file,path,subset,mode,size_MB,rows,columns
+Pre_train_D_0,0_Preliminary/0_Training/Pre_train_D_0.csv,prelim_train,D,9.3,179346,Timestamp|Arbitration_ID|DLC|Data|Class
+Pre_train_D_1,0_Preliminary/0_Training/Pre_train_D_1.csv,prelim_train,D,47.5,806390,Timestamp|Arbitration_ID|DLC|Data|Class|SubClass
+Pre_train_D_2,0_Preliminary/0_Training/Pre_train_D_2.csv,prelim_train,D,52.4,889395,Timestamp|Arbitration_ID|DLC|Data|Class|SubClass
+Pre_train_S_0,0_Preliminary/0_Training/Pre_train_S_0.csv,prelim_train,S,9.4,180686,Timestamp|Arbitration_ID|DLC|Data|Class
+Pre_train_S_1,0_Preliminary/0_Training/Pre_train_S_1.csv,prelim_train,S,47.1,799292,Timestamp|Arbitration_ID|DLC|Data|Class|SubClass
+Pre_train_S_2,0_Preliminary/0_Training/Pre_train_S_2.csv,prelim_train,S,48.1,817042,Timestamp|Arbitration_ID|DLC|Data|Class|SubClass
+Pre_submit_D,0_Preliminary/1_Submission/Pre_submit_D.csv,prelim_submit,D,117.9,2000733,Timestamp|Arbitration_ID|DLC|Data|Class|SubClass
+Pre_submit_S,0_Preliminary/1_Submission/Pre_submit_S.csv,prelim_submit,S,103.3,1751313,Timestamp|Arbitration_ID|DLC|Data|Class|SubClass
+Fin_host_session_submit_S,1_Final/Fin_host_session_submit_S.csv,final,S,64.6,1270310,Timestamp|Arbitration_ID|DLC|Data|Class|SubClass
