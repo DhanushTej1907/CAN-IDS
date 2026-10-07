@@ -1,0 +1,118 @@
+{
+  "train": [
+    "Pre_train_D_0",
+    "Pre_train_D_1",
+    "Pre_train_D_2",
+    "Pre_train_S_0",
+    "Pre_train_S_1",
+    "Pre_train_S_2"
+  ],
+  "train_always": [
+    "Pre_train_D_0",
+    "Pre_train_S_0"
+  ],
+  "cv_default": "lodo",
+  "cv_schemes": {
+    "lodo": [
+      {
+        "name": "lodo_day1",
+        "train": [
+          "Pre_train_D_0",
+          "Pre_train_D_2",
+          "Pre_train_S_0",
+          "Pre_train_S_2"
+        ],
+        "val": [
+          "Pre_train_D_1",
+          "Pre_train_S_1"
+        ]
+      },
+      {
+        "name": "lodo_day2",
+        "train": [
+          "Pre_train_D_0",
+          "Pre_train_D_1",
+          "Pre_train_S_0",
+          "Pre_train_S_1"
+        ],
+        "val": [
+          "Pre_train_D_2",
+          "Pre_train_S_2"
+        ]
+      }
+    ],
+    "lofo": [
+      {
+        "name": "lofo_Pre_train_D_1",
+        "train": [
+          "Pre_train_D_0",
+          "Pre_train_D_2",
+          "Pre_train_S_0",
+          "Pre_train_S_1",
+          "Pre_train_S_2"
+        ],
+        "val": [
+          "Pre_train_D_1"
+        ]
+      },
+      {
+        "name": "lofo_Pre_train_D_2",
+        "train": [
+          "Pre_train_D_0",
+          "Pre_train_D_1",
+          "Pre_train_S_0",
+          "Pre_train_S_1",
+          "Pre_train_S_2"
+        ],
+        "val": [
+          "Pre_train_D_2"
+        ]
+      },
+      {
+        "name": "lofo_Pre_train_S_1",
+        "train": [
+          "Pre_train_D_0",
+          "Pre_train_D_1",
+          "Pre_train_D_2",
+          "Pre_train_S_0",
+          "Pre_train_S_2"
+        ],
+        "val": [
+          "Pre_train_S_1"
+        ]
+      },
+      {
+        "name": "lofo_Pre_train_S_2",
+        "train": [
+          "Pre_train_D_0",
+          "Pre_train_D_1",
+          "Pre_train_D_2",
+          "Pre_train_S_0",
+          "Pre_train_S_1"
+        ],
+        "val": [
+          "Pre_train_S_2"
+        ]
+      }
+    ]
+  },
+  "test": [
+    "Pre_submit_D",
+    "Pre_submit_S"
+  ],
+  "extra_test": [
+    "Fin_host_session_submit_S"
+  ],
+  "stats_source": [
+    "Pre_train_D_0",
+    "Pre_train_S_0"
+  ],
+  "notes": [
+    "Split by FILE, never by row, to avoid temporal leakage.",
+    "train_always (Pre_train_*_0, Normal-only) is in the training set of every CV fold.",
+    "cv_default is 'lodo' (leave-one-day-out): Pre_train_{D,S}_1 and Pre_train_{D,S}_2 are same-day S/D twins that share the attack script, so leave-one-file-out (lofo) lets the twin of the validation file sit in training and can be optimistic. lofo is kept as a secondary scheme.",
+    "stats_source: per-ID timing stats (src.train_stats) come from these files only. They are in training for every fold, so the stats cannot leak any validation fold.",
+    "test (Pre_submit_*) is held out: no EDA, tuning or threshold selection on it.",
+    "extra_test (Fin_*) is an optional extra held-out test: session-relative timestamps (not UNIX) and S mode only."
+  ]
+}
