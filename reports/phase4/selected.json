@@ -1,0 +1,182 @@
+{
+  "approved": true,
+  "primary_fpr": 0.001,
+  "cv_scheme": "lodo",
+  "criterion": "mean over folds of macro recall (4 SubClasses) at primary_fpr; ties: all-attack PR-AUC",
+  "models": [
+    {
+      "model": "iforest",
+      "feature_set": "behavioral",
+      "config": "n_estimators300_max_samples4096",
+      "params": {
+        "n_estimators": 300,
+        "max_samples": 4096
+      },
+      "macro_recall_mean": 0.14699578524314222,
+      "macro_recall_worst": 0.1307651189283819,
+      "q": {
+        "0.001": 0.999103543363502,
+        "0.005": 0.996247479650338,
+        "0.01": 0.9923014502398897
+      },
+      "q_per_fold": {
+        "0.001": {
+          "lodo_day1": 0.9992737706684972,
+          "lodo_day2": 0.9989333160585068
+        },
+        "0.005": {
+          "lodo_day1": 0.9966634261909272,
+          "lodo_day2": 0.9958315331097488
+        },
+        "0.01": {
+          "lodo_day1": 0.9929140318180534,
+          "lodo_day2": 0.9916888686617261
+        }
+      }
+    },
+    {
+      "model": "iforest",
+      "feature_set": "id_inclusive",
+      "config": "n_estimators300_max_samples4096",
+      "params": {
+        "n_estimators": 300,
+        "max_samples": 4096
+      },
+      "macro_recall_mean": 0.1583747273779384,
+      "macro_recall_worst": 0.14770327820313792,
+      "q": {
+        "0.001": 0.9990748020871005,
+        "0.005": 0.9960825432742594,
+        "0.01": 0.9921969317886643
+      },
+      "q_per_fold": {
+        "0.001": {
+          "lodo_day1": 0.9991701731125624,
+          "lodo_day2": 0.9989794310616388
+        },
+        "0.005": {
+          "lodo_day1": 0.9963944911214802,
+          "lodo_day2": 0.9957705954270386
+        },
+        "0.01": {
+          "lodo_day1": 0.9927999698625292,
+          "lodo_day2": 0.9915938937147996
+        }
+      }
+    },
+    {
+      "model": "rule",
+      "feature_set": "behavioral",
+      "config": "default",
+      "params": {},
+      "macro_recall_mean": 0.045076015466810546,
+      "macro_recall_worst": 0.04263706114354675,
+      "q": {
+        "0.001": 0.9991891680672776,
+        "0.005": 0.995960366049844,
+        "0.01": 0.991875003618852
+      },
+      "q_per_fold": {
+        "0.001": {
+          "lodo_day1": 0.999151860413281,
+          "lodo_day2": 0.9992264757212743
+        },
+        "0.005": {
+          "lodo_day1": 0.9956598902703059,
+          "lodo_day2": 0.9962608418293821
+        },
+        "0.01": {
+          "lodo_day1": 0.9913040839412277,
+          "lodo_day2": 0.9924459232964761
+        }
+      }
+    },
+    {
+      "model": "rule",
+      "feature_set": "id_inclusive",
+      "config": "default",
+      "params": {},
+      "macro_recall_mean": 0.3116976773304534,
+      "macro_recall_worst": 0.3096467075998835,
+      "q": {
+        "0.001": 0.999183770571886,
+        "0.005": 0.9959606337856909,
+        "0.01": 0.9918608609655695
+      },
+      "q_per_fold": {
+        "0.001": {
+          "lodo_day1": 0.9990812257160527,
+          "lodo_day2": 0.9992863154277194
+        },
+        "0.005": {
+          "lodo_day1": 0.9956044289524822,
+          "lodo_day2": 0.9963168386188995
+        },
+        "0.01": {
+          "lodo_day1": 0.991231879584061,
+          "lodo_day2": 0.9924898423470779
+        }
+      }
+    },
+    {
+      "model": "xgboost",
+      "feature_set": "behavioral",
+      "config": "max_depth8_w_spoof1",
+      "params": {
+        "max_depth": 8,
+        "w_spoof": 1
+      },
+      "macro_recall_mean": 0.8876120668020249,
+      "macro_recall_worst": 0.787092034294728,
+      "q": {
+        "0.001": 0.9998069789690862,
+        "0.005": 0.9987797944761546,
+        "0.01": 0.9967749404906163
+      },
+      "q_per_fold": {
+        "0.001": {
+          "lodo_day1": 0.9997457150899781,
+          "lodo_day2": 0.9998682428481943
+        },
+        "0.005": {
+          "lodo_day1": 0.9984983586589244,
+          "lodo_day2": 0.9990612302933848
+        },
+        "0.01": {
+          "lodo_day1": 0.9963003115251757,
+          "lodo_day2": 0.997249569456057
+        }
+      }
+    },
+    {
+      "model": "xgboost",
+      "feature_set": "id_inclusive",
+      "config": "max_depth6_w_spoof5",
+      "params": {
+        "max_depth": 6,
+        "w_spoof": 5
+      },
+      "macro_recall_mean": 0.9329879907810908,
+      "macro_recall_worst": 0.8773652978573797,
+      "q": {
+        "0.001": 0.999722934445902,
+        "0.005": 0.9980840997028543,
+        "0.01": 0.9955360211617962
+      },
+      "q_per_fold": {
+        "0.001": {
+          "lodo_day1": 0.999680835812524,
+          "lodo_day2": 0.9997650330792799
+        },
+        "0.005": {
+          "lodo_day1": 0.9981802409114073,
+          "lodo_day2": 0.9979879584943012
+        },
+        "0.01": {
+          "lodo_day1": 0.9956143701320921,
+          "lodo_day2": 0.9954576721915003
+        }
+      }
+    }
+  ]
+}
