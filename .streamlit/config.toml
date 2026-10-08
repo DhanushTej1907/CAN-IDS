@@ -1,9 +1,12 @@
 [theme]
 base = "dark"
-primaryColor = "#0F9F94"
-backgroundColor = "#070B14"
-secondaryBackgroundColor = "#0E1526"
-textColor = "#E6ECF5"
+primaryColor = "#00E5FF"
+backgroundColor = "#000000"
+secondaryBackgroundColor = "#0A0A0A"
+textColor = "#FFFFFF"
+# Widgets read the theme font, not page CSS. Fallbacks keep it readable offline.
+font = "Space Grotesk:https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap, sans-serif"
+codeFont = "JetBrains Mono:https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap, monospace"
 
 [client]
 toolbarMode = "minimal"

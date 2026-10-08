@@ -9,6 +9,7 @@ tick pauses the replay instead of crashing.
 """
 from __future__ import annotations
 
+import html
 import sys
 import time
 from pathlib import Path
@@ -23,33 +24,43 @@ import plotly.graph_objects as go  # noqa: E402
 import streamlit as st  # noqa: E402
 from plotly.subplots import make_subplots  # noqa: E402
 
-from src.live import (ALERT_WINDOW_S, ReplayEngine, list_streams, load_detector,  # noqa: E402
-                      load_frames)
+from src.live import (ALERT_WINDOW_S, ATTACK_NAMES, ReplayEngine, list_streams,  # noqa: E402
+                      load_detector, load_frames)
 from src.train import REPORT_DIR  # noqa: E402
-from src.train_stats import load_train_stats  # noqa: E402
+from src.train_stats import load_splits, load_train_stats  # noqa: E402
 
 DEFAULT_STEM = "Pre_submit_D"
-SPEEDS = {"1×": 1, "10×": 10, "100×": 100}
+DEFAULT_SPEED = 10
 TICK_S = 0.5           # UI refresh interval of the live section
 TICK_SHARE = 0.6       # compute + render must fit in this share of TICK_S: a run still going when the
                        # next timed rerun arrives is cut short, and the elements at the bottom go stale
 BUDGET_RANGE = (0.05, 0.30)  # compute budget per tick, adapted to the measured render time
-TEAL, RED, SLATE = "#0F9F94", "#F43F5E", "#475569"  # normal / attack / neutral (validated on #0E1526)
-INK, INK_2, INK_3 = "#E6ECF5", "#A9B6CF", "#6B7A96"
-GRID = "rgba(255,255,255,0.06)"
+# One meaning per color, everywhere: cyan = normal/safe, red = attack/alert, amber = warning/missed.
+CYAN, RED, AMBER = "#00E5FF", "#FF1744", "#FFC400"
+INK, INK_2, INK_3 = "#FFFFFF", "#9CA3AF", "#6B7280"  # text, secondary text, axis ticks
+SURFACE = "#050505"
+GRID = "rgba(255,255,255,0.07)"
+TRANSPARENT = "rgba(0,0,0,0)"
+# Space Grotesk for text, JetBrains Mono for numbers; system fallbacks keep it readable offline.
+FONT = "'Space Grotesk', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif"
+MONO = "'JetBrains Mono', ui-monospace, SFMono-Regular, Consolas, 'Courier New', monospace"
+PLOT_FONT = "Space Grotesk, system-ui, Segoe UI, sans-serif"
+PLOT_MONO = "JetBrains Mono, Consolas, monospace"
+
+
+def rgba(hex_color: str, alpha: float) -> str:
+    r, g, b = (int(hex_color[i:i + 2], 16) for i in (1, 3, 5))
+    return f"rgba({r},{g},{b},{alpha})"
+
 
 st.set_page_config(page_title="CAN-IDS Live", page_icon="🛡️", layout="wide", initial_sidebar_state="expanded")
 
 CSS = f"""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
 .stApp {{
-  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  background:
-    radial-gradient(1100px 600px at 8% -10%, rgba(15,159,148,0.13), transparent 60%),
-    radial-gradient(900px 500px at 100% 0%, rgba(244,63,94,0.07), transparent 60%),
-    linear-gradient(180deg, #0A1020 0%, #05070D 100%);
-  background-attachment: fixed;
+  font-family: {FONT};
+  background: #000000;
   color: {INK};
 }}
 #MainMenu, footer, [data-testid="stToolbar"], [data-testid="stDecoration"],
@@ -60,15 +71,15 @@ header[data-testid="stHeader"] {{ background: transparent; }}
 [data-stale="true"] {{ opacity: 1 !important; transition: none !important; }}
 
 section[data-testid="stSidebar"] {{
-  background: rgba(10,16,32,0.72); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  background: {SURFACE}; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
   border-right: 1px solid rgba(255,255,255,0.08);
 }}
 
 .stApp [class*="st-key-glass"] {{
-  background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12);
   border-radius: 16px; padding: 18px 20px 14px 20px;
   backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
-  box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.6);
 }}
 .card-title {{ font-size: 0.78rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
   color: {INK_2}; margin: 0 0 6px 2px; }}
@@ -79,30 +90,49 @@ section[data-testid="stSidebar"] {{
 .kpi-row {{ display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-bottom: 16px; }}
 @media (max-width: 900px) {{ .kpi-row {{ grid-template-columns: repeat(2, minmax(0, 1fr)); }} }}
 .kpi {{
-  background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 16px;
+  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12); border-radius: 16px;
   padding: 16px 20px; backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
-  box-shadow: 0 8px 32px rgba(0,0,0,0.35); min-height: 112px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.6); min-height: 112px;
 }}
 .kpi-label {{ font-size: 0.74rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: {INK_2}; }}
-.kpi-value {{ font-size: 1.9rem; font-weight: 700; color: {INK}; margin-top: 6px; font-variant-numeric: tabular-nums; }}
-.kpi-sub {{ font-size: 0.8rem; color: {INK_3}; margin-top: 2px; font-variant-numeric: tabular-nums; }}
+.kpi-value {{ font-family: {MONO}; font-size: 1.75rem; font-weight: 700; color: {INK}; margin-top: 6px;
+  letter-spacing: -0.02em; }}
+.mono {{ font-family: {MONO}; }}
+.kpi-sub {{ font-size: 0.8rem; color: {INK_2}; margin-top: 2px; font-variant-numeric: tabular-nums; }}
+.warn {{ color: {AMBER}; }}
 .badge {{ display: inline-flex; align-items: center; gap: 10px; margin-top: 8px; padding: 8px 16px;
   border-radius: 999px; font-weight: 700; font-size: 1.15rem; letter-spacing: .06em; }}
 .badge .dot {{ width: 11px; height: 11px; border-radius: 50%; }}
-.badge.normal {{ background: rgba(15,159,148,0.16); border: 1px solid rgba(15,159,148,0.55); color: #8EF0E4; }}
-.badge.normal .dot {{ background: {TEAL}; }}
-.badge.attack {{ background: rgba(244,63,94,0.18); border: 1px solid rgba(244,63,94,0.7); color: #FFC2CD;
+.badge.normal {{ background: {rgba(CYAN, 0.10)}; border: 1px solid {rgba(CYAN, 0.65)}; color: {CYAN};
+  box-shadow: 0 0 18px {rgba(CYAN, 0.18)}; }}
+.badge.normal .dot {{ background: {CYAN}; box-shadow: 0 0 8px {CYAN}; }}
+.badge.attack {{ background: {rgba(RED, 0.14)}; border: 1px solid {RED}; color: {RED};
   animation: pulse 1.2s ease-in-out infinite; }}
-.badge.attack .dot {{ background: {RED}; }}
-.kpi.attack {{ border-color: rgba(244,63,94,0.55); box-shadow: 0 0 28px rgba(244,63,94,0.25); }}
-@keyframes pulse {{ 0%,100% {{ box-shadow: 0 0 0 0 rgba(244,63,94,0.45); }} 50% {{ box-shadow: 0 0 0 10px rgba(244,63,94,0); }} }}
+.badge.attack .dot {{ background: {RED}; box-shadow: 0 0 8px {RED}; }}
+.kpi.attack {{ border-color: {rgba(RED, 0.7)}; box-shadow: 0 0 30px {rgba(RED, 0.35)}; }}
+@keyframes pulse {{ 0%,100% {{ box-shadow: 0 0 0 0 {rgba(RED, 0.55)}; }} 50% {{ box-shadow: 0 0 0 10px {rgba(RED, 0)}; }} }}
 
 .side-brand {{ font-weight: 700; font-size: 1.1rem; color: {INK}; margin-bottom: 2px; }}
-.side-muted {{ color: {INK_3}; font-size: 0.8rem; }}
+.side-muted {{ color: {INK_2}; font-size: 0.8rem; }}
+.speed-note {{ color: {INK_2}; font-size: 0.8rem; margin: -8px 0 10px 0; }}
+.speed-note b {{ font-family: {MONO}; color: {INK}; font-weight: 500; }}
 .side-kv {{ display: flex; justify-content: space-between; gap: 14px; font-size: 0.86rem; padding: 3px 0; color: {INK_2}; }}
 .side-kv span {{ flex: none; }}
-.side-kv b {{ color: {INK}; font-weight: 600; font-variant-numeric: tabular-nums; text-align: right; }}
-div[data-testid="stProgress"] > div > div > div > div {{ background: {TEAL}; }}
+.side-kv b {{ color: {INK}; font-weight: 600; text-align: right; }}
+.side-kv b.mono {{ font-weight: 500; }}
+
+.alert-log {{ max-height: 400px; overflow-y: auto; border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; }}
+.alert-log table {{ width: 100%; border-collapse: collapse; font-size: 0.86rem; }}
+.alert-log th {{ position: sticky; top: 0; background: #0B0B0B; color: {INK_2}; font-weight: 500; text-align: left;
+  padding: 8px 10px; border-bottom: 1px solid rgba(255,255,255,0.12); white-space: nowrap; }}
+.alert-log td {{ padding: 7px 10px; border-bottom: 1px solid rgba(255,255,255,0.06); color: {INK}; white-space: nowrap; }}
+.alert-log td.mono {{ font-size: 0.82rem; }}
+.alert-log td.num {{ text-align: right; }}
+.alert-log .atk {{ color: {RED}; font-weight: 600; }}
+.alert-log .fa {{ color: {AMBER}; }}
+div[data-testid="stProgress"] > div > div > div > div {{ background: {CYAN}; box-shadow: 0 0 10px {CYAN}; }}
+[data-testid="stBaseButton-primary"]:not(:disabled), [data-testid="stBaseButton-primary"]:not(:disabled) p {{
+  color: #000000 !important; font-weight: 600; }}
 </style>
 """
 
@@ -122,6 +152,15 @@ def get_stats():
 @st.cache_resource(show_spinner="Loading CAN frames…", max_entries=2)
 def get_frames(stem: str):
     return load_frames(stem)
+
+
+@st.cache_resource(show_spinner=False)
+def held_out_streams() -> dict[str, str]:
+    """Replayable files: splits.json test + extra_test only (never training files), stem -> label."""
+    splits = load_splits()
+    labels = {**{s: "Test" for s in splits["test"]}, **{s: "Extra test" for s in splits["extra_test"]}}
+    available = set(list_streams())
+    return {s: lab for s, lab in labels.items() if s in available}
 
 
 @st.cache_resource(show_spinner=False)
@@ -195,7 +234,7 @@ def kpi_html(eng: ReplayEngine, speed: int) -> str:
     cd_load = eng.chart_data()["load"]
     bus_fps = cd_load[-10:].sum() if len(cd_load) else 0  # last ~1 s of stream
     eff = ss.eff_speed
-    cpu_note = " · CPU-bound" if ss.running and eff and eff < 0.8 * speed else ""
+    cpu_note = ' · <span class="warn">CPU-bound</span>' if ss.running and eff and eff < 0.8 * speed else ""
     status = eng.status
     last = eng.alerts[-1] if eng.alerts else None
     if status == "ATTACK" and last:
@@ -223,13 +262,13 @@ def kpi_html(eng: ReplayEngine, speed: int) -> str:
 def _layout(fig: go.Figure, height: int) -> None:
     fig.update_layout(
         template="plotly_dark", height=height, margin=dict(l=8, r=8, t=36, b=8),
-        paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-        font=dict(family="Inter, system-ui, Segoe UI, sans-serif", color=INK_2, size=12),
+        paper_bgcolor=TRANSPARENT, plot_bgcolor=TRANSPARENT,
+        font=dict(family=PLOT_FONT, color=INK_2, size=12),
         legend=dict(orientation="h", yanchor="bottom", y=1.02, x=0, bgcolor="rgba(0,0,0,0)", font=dict(color=INK_2)),
-        hoverlabel=dict(bgcolor="#0E1526", bordercolor="rgba(255,255,255,0.2)", font=dict(color=INK)),
+        hoverlabel=dict(bgcolor=SURFACE, bordercolor="rgba(255,255,255,0.25)", font=dict(color=INK)),
         uirevision="keep")
-    fig.update_xaxes(gridcolor=GRID, zeroline=False, linecolor=GRID, tickfont=dict(color=INK_3))
-    fig.update_yaxes(gridcolor=GRID, zeroline=False, linecolor=GRID, tickfont=dict(color=INK_3))
+    fig.update_xaxes(gridcolor=GRID, zeroline=False, linecolor=GRID, tickfont=dict(color=INK_3, family=PLOT_MONO, size=11))
+    fig.update_yaxes(gridcolor=GRID, zeroline=False, linecolor=GRID, tickfont=dict(color=INK_3, family=PLOT_MONO, size=11))
 
 
 # Figures are built once per session and only their data is replaced each tick: building a plotly
@@ -237,20 +276,20 @@ def _layout(fig: go.Figure, height: int) -> None:
 
 def _build_live_figure(thr: float) -> go.Figure:
     fig = make_subplots(rows=2, cols=1, shared_xaxes=True, vertical_spacing=0.08, row_heights=[0.58, 0.42])
-    fig.add_trace(go.Scatter(x=[], y=[], mode="lines", name="Attack score", line=dict(color=TEAL, width=2),
+    fig.add_trace(go.Scatter(x=[], y=[], mode="lines", name="Attack score", line=dict(color=CYAN, width=2),
                              hovertemplate="t=%{x:.1f}s<br>score %{y:.2f}<extra></extra>"), row=1, col=1)
     fig.add_trace(go.Scatter(x=[], y=[], mode="lines", name="Above threshold", line=dict(color=RED, width=2.5),
                              connectgaps=False, hoverinfo="skip"), row=1, col=1)
     fig.add_trace(go.Scatter(x=[], y=[], mode="markers", showlegend=False, hoverinfo="skip",
-                             marker=dict(color=RED, size=8, line=dict(color="#0E1526", width=2))), row=1, col=1)
+                             marker=dict(color=RED, size=8, line=dict(color=SURFACE, width=2))), row=1, col=1)
     fig.add_hline(y=thr, line=dict(color=INK_2, width=1.5, dash="dash"), row=1, col=1,
                   annotation_text=f"threshold {thr:.2f}", annotation_position="top left",
                   annotation_font=dict(color=INK_2, size=11))
     fig.add_trace(go.Scatter(x=[], y=[], mode="lines", name="Bus load", fill="tozeroy",
-                             line=dict(color=TEAL, width=1.5), fillcolor="rgba(15,159,148,0.18)",
+                             line=dict(color=CYAN, width=1.5), fillcolor=rgba(CYAN, 0.12),
                              hovertemplate="t=%{x:.1f}s<br>%{y:.0f} frames<extra></extra>"), row=2, col=1)
     fig.add_trace(go.Bar(x=[], y=[], name="Ground-truth attack", width=0.1,
-                         marker=dict(color="rgba(244,63,94,0.55)", line=dict(width=0)),
+                         marker=dict(color=rgba(RED, 0.45), line=dict(width=0)),
                          hovertemplate="t=%{x:.1f}s<br>%{y:.0f} frames<extra>true attack</extra>"), row=2, col=1)
     _layout(fig, 470)
     fig.update_layout(hovermode="x unified", bargap=0, showlegend=True)
@@ -285,31 +324,52 @@ def live_figure(eng: ReplayEngine) -> go.Figure:
     return fig
 
 
-def _build_bar_figure() -> go.Figure:
+def _gauge_layout(fig: go.Figure, height: int, margin: dict) -> None:
+    fig.update_layout(template="plotly_dark", height=height, margin=margin,
+                      paper_bgcolor=TRANSPARENT, plot_bgcolor=TRANSPARENT,
+                      font=dict(family=PLOT_FONT, color=INK_2, size=12))
+
+
+def _band_color(pct: float) -> str:
+    return RED if pct < 50 else AMBER if pct < 80 else CYAN
+
+
+# 2x2 grid of per-attack gauges (paper coordinates); the label under each sits just below its domain.
+GAUGE_DOMAINS = [((0.0, 0.44), (0.63, 1.0)), ((0.56, 1.0), (0.63, 1.0)),
+                 ((0.0, 0.44), (0.09, 0.46)), ((0.56, 1.0), (0.09, 0.46))]
+
+
+def _build_attack_gauges() -> go.Figure:
     fig = go.Figure()
-    fig.add_trace(go.Bar(y=[], x=[], orientation="h", name="Detected",
-                         marker=dict(color=TEAL, line=dict(color="#0E1526", width=2)),
-                         hovertemplate="%{y}: %{x:,} detected<extra></extra>"))
-    fig.add_trace(go.Bar(y=[], x=[], orientation="h", name="Missed",
-                         marker=dict(color=SLATE, line=dict(color="#0E1526", width=2)),
-                         hovertemplate="%{y}: %{x:,} missed<extra></extra>"))
-    _layout(fig, 300)
-    fig.update_layout(barmode="stack", bargap=0.35, hovermode="closest", legend_traceorder="normal")
-    fig.update_xaxes(title=dict(text="attack frames", font=dict(color=INK_3, size=11)))
+    steps = [dict(range=[0, 50], color=rgba(RED, 0.30)), dict(range=[50, 80], color=rgba(AMBER, 0.30)),
+             dict(range=[80, 100], color=rgba(CYAN, 0.30))]
+    for name, (dx, dy) in zip(ATTACK_NAMES, GAUGE_DOMAINS):
+        fig.add_trace(go.Indicator(
+            mode="gauge", value=0, domain=dict(x=dx, y=dy),
+            title=dict(text=name, font=dict(color=INK, size=14)),
+            number=dict(suffix="%", valueformat=".0f", font=dict(color=INK, size=24, family=PLOT_MONO)),
+            gauge=dict(shape="angular", bgcolor=TRANSPARENT, borderwidth=0, steps=steps,
+                       bar=dict(color=TRANSPARENT, thickness=0.32),
+                       axis=dict(range=[0, 100], tickvals=[50, 80], ticksuffix="%",
+                                 tickcolor=INK_3, tickwidth=1, tickfont=dict(color=INK_3, size=10, family=PLOT_MONO)))))
+    _gauge_layout(fig, 420, dict(l=24, r=24, t=30, b=24))
     return fig
 
 
-def per_attack_figure(eng: ReplayEngine) -> go.Figure:
-    fig = _cached_figure("fig_bar", "bar", _build_bar_figure)
-    pa = eng.per_attack().iloc[::-1]  # Flooding on top
-    labels = [f"{r.detected / r.total:.0%}" if r.total else "not seen yet" for r in pa.itertuples()]
+def attack_gauges(eng: ReplayEngine) -> go.Figure:
+    fig = _cached_figure("fig_gauges", "gauges", _build_attack_gauges)
+    pa = eng.per_attack()  # ATTACK_NAMES order, same as the traces
+    notes = []
     with fig.batch_update():
-        fig.data[0].update(y=pa["subclass"].tolist(), x=pa["detected"].to_numpy())
-        fig.data[1].update(y=pa["subclass"].tolist(), x=pa["missed"].to_numpy())
-        fig.layout.annotations = [dict(x=int(tot), y=sc, text=lab, showarrow=False, xanchor="left", xshift=6,
-                                       font=dict(color=INK, size=12))
-                                  for sc, tot, lab in zip(pa["subclass"], pa["total"], labels)]
-        fig.layout.xaxis.range = [0, max(1, int(pa["total"].max())) * 1.18]
+        for trace, r, (dx, dy) in zip(fig.data, pa.itertuples(), GAUGE_DOMAINS):
+            pct = 100 * r.detected / r.total if r.total else 0.0
+            trace.update(value=pct, mode="gauge+number" if r.total else "gauge",
+                         gauge_bar_color=_band_color(pct) if r.total else TRANSPARENT)
+            text = f"{r.detected:,} / {r.total:,}<br>frames detected" if r.total else "not seen yet"
+            notes.append(dict(x=(dx[0] + dx[1]) / 2, y=dy[0], xref="paper", yref="paper",
+                              xanchor="center", yanchor="top",
+                              text=text, showarrow=False, font=dict(color=INK_2, size=12)))
+        fig.layout.annotations = notes
     return fig
 
 
@@ -323,6 +383,18 @@ def alert_table(eng: ReplayEngine) -> pd.DataFrame:
         "True SubClass": [a["true"] for a in rows],
         "Dur.": [f"{a['end_s'] - a['time_s']:.1f} s" for a in rows],
     })
+
+
+def alert_log_html(df: pd.DataFrame) -> str:
+    """Predicted ATTACK in red; true SubClass red for real attacks, amber for false alarms."""
+    head = "".join(f"<th>{c}</th>" for c in df.columns)
+    rows = []
+    for r in df.itertuples(index=False):
+        true_cls = "fa" if r[4].startswith("Normal") else "atk"
+        rows.append(f'<tr><td class="mono">{r[0]}</td><td class="mono">{html.escape(r[1])}</td>'
+                    f'<td class="atk">{html.escape(r[2])}</td><td class="mono num">{r[3]:.2f}</td>'
+                    f'<td class="{true_cls}">{html.escape(r[4])}</td><td class="mono num">{r[5]}</td></tr>')
+    return f'<div class="alert-log"><table><thead><tr>{head}</tr></thead><tbody>{"".join(rows)}</tbody></table></div>'
 
 
 def render(eng: ReplayEngine, speed: int) -> None:
@@ -345,17 +417,11 @@ def render(eng: ReplayEngine, speed: int) -> None:
         if df.empty:
             st.caption("No alerts yet.")
         else:
-            st.dataframe(df, hide_index=True, height=300, width="stretch", column_config={
-                "Time": st.column_config.TextColumn(width="small"),
-                "CAN ID": st.column_config.TextColumn(width="small"),
-                "Predicted": st.column_config.TextColumn(width="small"),
-                "Peak": st.column_config.NumberColumn(width="small", format="%.2f"),
-                "True SubClass": st.column_config.TextColumn(width="medium"),
-                "Dur.": st.column_config.TextColumn(width="small")})
-    with right, st.container(key="glass_bars"):
+            st.markdown(alert_log_html(df), unsafe_allow_html=True)
+    with right, st.container(key="glass_gauges"):
         st.markdown('<div class="card-title">Per-attack detection (frame level)</div>', unsafe_allow_html=True)
-        st.plotly_chart(per_attack_figure(eng), key="bar_chart", width="stretch",
-                        config={"displayModeBar": False, "responsive": True})
+        st.plotly_chart(attack_gauges(eng), key="attack_gauges", width="stretch",
+                        config={"displayModeBar": False, "staticPlot": True, "responsive": True})
         fp = int(eng.flagged[0])
         st.caption(f"Flag = score > threshold (before N-aggregation). Normal false positives: "
                    f"{fp:,} (FPR {eng.normal_fpr:.3%}).")
@@ -368,9 +434,10 @@ def main() -> None:
     ss = st.session_state
     st.markdown(CSS, unsafe_allow_html=True)
     det = get_detector()
-    stems = list_streams()
+    labels = held_out_streams()
+    stems = list(labels)
     if not stems:
-        st.error("No files in data/processed. Run `python -m src.load` first.")
+        st.error("No held-out files (splits.json test / extra_test) in data/processed. Run `python -m src.load`.")
         return
 
     with st.sidebar:
@@ -378,8 +445,10 @@ def main() -> None:
                     '<div class="side-muted">Real-time CAN bus intrusion detection</div>', unsafe_allow_html=True)
         st.divider()
         stem = st.selectbox("Replay file", stems, key="stem", on_change=on_file_change,
+                            format_func=lambda s: f"{s} · {labels[s]}",
                             index=stems.index(DEFAULT_STEM) if DEFAULT_STEM in stems else 0)
-        speed_label = st.radio("Replay speed", list(SPEEDS), index=1, horizontal=True, key="speed_label")
+        st.slider("Replay speed", 1, 100, DEFAULT_SPEED, key="speed", format="%d×")
+        speed_panel()
         st.slider("Alert when ≥ N flagged frames within 100 ms", 1, 20, 3, key="n_alert")
         c1, c2, c3 = st.columns(3)
         c1.button("Start", on_click=on_start, type="primary", width="stretch", disabled=ss.running)
@@ -391,16 +460,16 @@ def main() -> None:
         ref = reference_latency_us(kind, "behavioral")
         st.markdown(
             f'<div class="side-kv"><span>Model</span><b>{det.name}</b></div>'
-            f'<div class="side-kv"><span>Threshold</span><b>{det.threshold:.4f}</b></div>'
-            f'<div class="side-kv"><span>Target FPR</span><b>{det.target_fpr:.1%}</b></div>'
-            + (f'<div class="side-kv"><span>Single-frame p50 (benchmark)</span><b>{ref:,.0f} µs</b></div>' if ref else ""),
+            f'<div class="side-kv"><span>Threshold</span><b class="mono">{det.threshold:.4f}</b></div>'
+            f'<div class="side-kv"><span>Target FPR</span><b class="mono">{det.target_fpr:.1%}</b></div>'
+            + (f'<div class="side-kv"><span>1-frame p50 (bench)</span><b class="mono">{ref:,.0f} µs</b></div>'
+               if ref else ""),
             unsafe_allow_html=True)
         if det.fallback:
             st.warning(det.source)
         else:
             st.caption(f"Source: {det.source}")
 
-    speed = SPEEDS[speed_label]
     try:
         eng = ensure_engine(stem, det)
     except Exception as e:  # noqa: BLE001
@@ -416,7 +485,26 @@ def main() -> None:
 
     with st.sidebar:
         latency_panel()
-    live_panel(speed)
+    live_panel()
+
+
+def speed_panel() -> None:
+    run_every = 1.0 if st.session_state.running else None
+
+    @st.fragment(run_every=run_every)
+    def _speed() -> None:
+        ss = st.session_state
+        requested = int(ss.get("speed", DEFAULT_SPEED))
+        achieved = ss.eff_speed if ss.running else 0.0
+        if not ss.running:
+            note = f"requested <b>{requested}×</b> · paused"
+        else:
+            note = f"requested <b>{requested}×</b> · achieved <b>{achieved:.1f}×</b>"
+            if achieved < 0.8 * requested:
+                note += ' · <span class="warn">CPU-bound</span>'
+        st.markdown(f'<div class="speed-note">{note}</div>', unsafe_allow_html=True)
+
+    _speed()
 
 
 @st.fragment(run_every=1.0)
@@ -428,19 +516,20 @@ def latency_panel() -> None:
         st.caption("Starts with the replay.")
         return
     st.markdown(
-        f'<div class="side-kv"><span>Features (step)</span><b>{lt.feature_us:,.1f} µs</b></div>'
-        f'<div class="side-kv"><span>Model (batched)</span><b>{lt.model_us:,.1f} µs</b></div>'
-        f'<div class="side-kv"><span>Total</span><b>{lt.feature_us + lt.model_us:,.1f} µs</b></div>'
+        f'<div class="side-kv"><span>Features (step)</span><b class="mono">{lt.feature_us:,.1f} µs</b></div>'
+        f'<div class="side-kv"><span>Model (batched)</span><b class="mono">{lt.model_us:,.1f} µs</b></div>'
+        f'<div class="side-kv"><span>Total</span><b class="mono">{lt.feature_us + lt.model_us:,.1f} µs</b></div>'
         f'<div class="side-muted">last tick: {lt.n_frames:,} frames</div>', unsafe_allow_html=True)
 
 
-def live_panel(speed: int) -> None:
+def live_panel() -> None:
     run_every = TICK_S if st.session_state.running else None
 
     @st.fragment(run_every=run_every)
     def _live() -> None:
         ss = st.session_state
         eng = ss.engine
+        speed = int(ss.get("speed", DEFAULT_SPEED))
         finished = False
         if ss.running:
             try:
